@@ -1,0 +1,64 @@
+using System;
+using System.Collections.Generic;
+
+// Делегат Criteria<T> для визначення критерію пошуку
+public delegate bool Criteria<T>(T item);
+
+// Дженеричний клас Repository<T>
+public class Repository<T>
+{
+    private List<T> items;
+
+    public Repository()
+    {
+        items = new List<T>();
+    }
+
+    // Додавання елемента до репозиторію
+    public void Add(T item)
+    {
+        items.Add(item);
+    }
+
+    // Пошук елементів, які задовольняють критерію
+    public List<T> Find(Criteria<T> criteria)
+    {
+        List<T> result = new List<T>();
+
+        foreach (T item in items)
+        {
+            if (criteria(item))
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Приклад використання
+        Repository<int> intRepository = new Repository<int>();
+        for (int i = 1; i <= 10; i++)
+        {
+            intRepository.Add(i);
+        }
+
+        // Визначення критерію для пошуку парних чисел
+        Criteria<int> evenCriteria = x => x % 2 == 0;
+
+        // Знайдення елементів, що задовольняють критерію
+        List<int> evenNumbers = intRepository.Find(evenCriteria);
+
+        Console.WriteLine("Even Numbers:");
+        foreach (int number in evenNumbers)
+        {
+            Console.Write($"{number} ");
+        }
+        Console.WriteLine();
+    }
+}
